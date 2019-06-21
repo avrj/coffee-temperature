@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.org/avrj/coffee-temperature.svg?branch=master)](https://travis-ci.org/avrj/coffee-temperature)
