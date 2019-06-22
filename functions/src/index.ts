@@ -7,12 +7,12 @@ import express, { Request, Response } from 'express';
 import bodyParser from "body-parser";
 import morgan from "morgan";
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 const app = express();
 const main = express();
 
-main.use(morgan('combined'))
+app.use(morgan('combined'))
 
 main.use('/', app);
 main.use(bodyParser.json());
@@ -26,6 +26,11 @@ const asyncMiddleware = (fn: any) =>
   };
 
 app.get('/coffee', asyncMiddleware(async (request: Request, response: Response) => {
+    if(request.query.token !== functions.config().wuffice_coffee.slack_command_token) {
+        response.status(401).send({error: "Access denied"})
+        return;
+    }
+
     const snapshot = await admin.database().ref('/timestamped_measures').orderByChild("timestamp").limitToLast(1)
     .once('value')
 

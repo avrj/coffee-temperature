@@ -61,5 +61,7 @@ void loop()
     Serial.println("*C");
 
     Firebase.pushFloat(firebaseData, "/coffee1/temp", objTemp);
+
+    delay(1000*60);
   }
 }
