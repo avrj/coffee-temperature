@@ -5,11 +5,14 @@ import * as admin from 'firebase-admin'
 
 import express, { Request, Response } from 'express';
 import bodyParser from "body-parser";
+import morgan from "morgan";
 
 admin.initializeApp(functions.config().firebase);
 
 const app = express();
 const main = express();
+
+app.use(morgan('combined'))
 
 main.use('/', app);
 main.use(bodyParser.json());
