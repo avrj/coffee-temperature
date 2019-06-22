@@ -3,8 +3,8 @@ import * as functions from 'firebase-functions';
 // CAUTION!!! This gives this code full read/write rights from/to the Realtime Database.
 import * as admin from 'firebase-admin'
 
-import * as express from 'express';
-import * as bodyParser from "body-parser";
+import express, { Request, Response } from 'express';
+import bodyParser from "body-parser";
 
 admin.initializeApp(functions.config().firebase);
 
@@ -22,13 +22,16 @@ const asyncMiddleware = (fn: any) =>
       .catch(next);
   };
 
-app.get('/coffee', asyncMiddleware(async (request: any, response: any) => {
+app.get('/coffee', asyncMiddleware(async (request: Request, response: Response) => {
     const snapshot = await admin.database().ref('/timestamped_measures').orderByChild("timestamp").limitToLast(1)
     .once('value')
 
     snapshot.forEach(childSnapshot => {
         const {value, timestamp} = childSnapshot.val();
         if(Date.now()-timestamp > 60*5) {
+            console.log(Date.now());
+            console.log(timestamp);
+            console.log(Date.now()-timestamp);
             response.send(`Oops! Seems like the temperature hasn't updated in a while. Please fix it :pray: The latest update is from ${new Date(timestamp)}`);
         } else {
             if(value >= 50) {
