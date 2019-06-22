@@ -28,10 +28,7 @@ app.get('/coffee', asyncMiddleware(async (request: Request, response: Response) 
 
     snapshot.forEach(childSnapshot => {
         const {value, timestamp} = childSnapshot.val();
-        if(Date.now()-timestamp > 60*5) {
-            console.log(Date.now());
-            console.log(timestamp);
-            console.log(Date.now()-timestamp);
+        if(Date.now()-timestamp > 1000*60*5) {
             response.send(`Oops! Seems like the temperature hasn't updated in a while. Please fix it :pray: The latest update is from ${new Date(timestamp)}`);
         } else {
             if(value >= 50) {
