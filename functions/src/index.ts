@@ -27,8 +27,16 @@ app.get('/coffee', asyncMiddleware(async (request: any, response: any) => {
     .once('value')
 
     snapshot.forEach(childSnapshot => {
-        const value = childSnapshot.val();
-        response.send(`The temperature of the coffee is currently ${parseFloat(value.value).toFixed(0)} °C`);
+        const {value, timestamp} = childSnapshot.val();
+        if(Date.now()-timestamp > 60*5) {
+            response.send(`Oops! Seems like the temperature hasn't updated in a while. Please fix it :pray: The latest update is from ${new Date(timestamp)}`);
+        } else {
+            if(value >= 50) {
+                response.send(`The temperature of the coffee is currently ${parseFloat(value).toFixed(0)} °C :coffee_parrot: :feelsgoodman:`);
+            } else {
+                response.send(`No fresh coffee for you :feelsbadman:`);
+            }
+        }
     });
 }))
 
