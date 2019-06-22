@@ -8,8 +8,3 @@ Monitor the temperature of coffee with WeMos D1 mini microcontroller and MLX9061
 **Feature ideas:**
 
 * Detect if the coffeepot is in place or not (maybe with ultrasonic sensor)
-
-**TODO:**
-
-* Add prettier
-* Require access token
