@@ -7,7 +7,8 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "format": "prettier --write 'src/**/*.{ts,js,css,json,md}'"
   },
   "engines": {
     "node": "8"
@@ -24,8 +25,22 @@
     "morgan": "^1.9.1"
   },
   "devDependencies": {
+    "husky": "^2.4.1",
+    "lint-staged": "^8.2.1",
+    "prettier": "1.18.2",
     "tslint": "^5.12.0",
     "typescript": "^3.2.2"
   },
-  "private": true
+  "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,css,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
 }
