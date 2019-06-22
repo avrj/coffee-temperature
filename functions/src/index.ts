@@ -26,6 +26,7 @@ const asyncMiddleware = (fn: any) =>
   };
 
 app.get('/coffee', asyncMiddleware(async (request: Request, response: Response) => {
+    console.log(request.query);
     const snapshot = await admin.database().ref('/timestamped_measures').orderByChild("timestamp").limitToLast(1)
     .once('value')
 
