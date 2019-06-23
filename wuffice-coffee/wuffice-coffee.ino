@@ -90,7 +90,7 @@ void loop()
     distance = duration / 58.2;
     Serial.println(distance);
 
-    StaticJsonDocument<200> doc;
+    StaticJsonDocument<200> doc; // TODO: Use https://arduinojson.org/v6/assistant/ to calculate the RAM allocated to this document
     doc["temp"] = objTemp;
     doc["distance"] = distance;
 
