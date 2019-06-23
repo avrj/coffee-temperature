@@ -5,23 +5,18 @@ import * as admin from "firebase-admin";
 
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
-import morgan from "morgan";
-
-admin.initializeApp();
-
-const app = express();
-const main = express();
-
-app.use(morgan("combined"));
-
-main.use("/", app);
-main.use(bodyParser.json());
-
-const webApi = functions.https.onRequest(main);
 
 const asyncMiddleware = (fn: any) => (req: any, res: any, next: any) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
+
+admin.initializeApp();
+
+const app = express();
+
+app.use(bodyParser.json());
+
+const webApi = functions.https.onRequest(app);
 
 app.get(
   "/coffee",
@@ -43,9 +38,10 @@ app.get(
 
     snapshot.forEach(childSnapshot => {
       const { value, timestamp } = childSnapshot.val();
+
       if (Date.now() - timestamp > 1000 * 60 * 5) {
         response.send(
-          `Oops! Seems like the temperature hasn't updated in a while. Please fix it :pray: The latest update is from ${new Date(
+          `Oops! Seems like the temperature hasn't updated in a while. Please fix it :pray: The latest measurement is from ${new Date(
             timestamp
           )}`
         );
@@ -70,13 +66,16 @@ const formatData = functions.database
     const original = snapshot.val();
     const pushId = context.params.pushId;
 
-    console.log(`Detected new measure ${original} with pushId ${pushId}`);
+    console.log(
+      `Detected new measure ${JSON.stringify(original)} with pushId ${pushId}`
+    );
 
     return admin
       .database()
       .ref("timestamped_measures")
       .push({
-        value: original,
+        value: original.temp,
+        distance: original.distance,
         timestamp: admin.database.ServerValue.TIMESTAMP
       });
   });
