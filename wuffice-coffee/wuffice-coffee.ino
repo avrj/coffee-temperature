@@ -2,6 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <Wire.h>
 #include <Adafruit_MLX90614.h>
+#include <ArduinoJson.h>
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
@@ -10,7 +11,12 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 #define WIFI_SSID ""
 #define WIFI_PASSWORD ""
 
+#define echoPin D6
+#define trigPin D7
+
 unsigned long check_wifi = 30000;
+
+long duration, distance; // Duration used to calculate distance
 
 FirebaseData firebaseData;
 
@@ -39,6 +45,19 @@ void setup()
   mlx.begin(); 
 
   pinMode(BUILTIN_LED, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  //Calculate the distance (in cm) based on the speed of sound.
+  distance = duration / 58.2;
+  Serial.println(distance);
+
 }
 
 void loop()
@@ -60,8 +79,27 @@ void loop()
     Serial.print(objTemp);
     Serial.println("*C");
 
-    Firebase.pushFloat(firebaseData, "/coffee1/temp", objTemp);
+    /* The following trigPin/echoPin cycle is used to determine the distance of the nearest object by bouncing soundwaves off of it. */
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    duration = pulseIn(echoPin, HIGH);
+    //Calculate the distance (in cm) based on the speed of sound.
+    distance = duration / 58.2;
+    Serial.println(distance);
 
-    delay(1000*60);
+    StaticJsonDocument<200> doc;
+    doc["temp"] = objTemp;
+    doc["distance"] = distance;
+
+    String jsonData;
+    serializeJson(doc, jsonData);
+
+    Firebase.pushJSON(firebaseData, "/coffee1/temp", jsonData);
+
+    delay(1000 * 60);
+    //delay(1000 * 10);
   }
 }

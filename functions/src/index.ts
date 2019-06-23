@@ -37,7 +37,14 @@ app.get(
       .once("value");
 
     snapshot.forEach(childSnapshot => {
-      const { value, timestamp } = childSnapshot.val();
+      const { value, timestamp, distance } = childSnapshot.val();
+
+      if (distance > 10) {
+        response.send(
+          `Seems like the coffee pot is not in place :feelsbadman: Check again later `
+        );
+        return;
+      }
 
       if (Date.now() - timestamp > 1000 * 60 * 5) {
         response.send(
