@@ -13,4 +13,10 @@ Uses Firebase Real-time database to store measurements and Firebase Functions to
 
 The API is used by a Slack slash command.
 
+**Feature ideas:**
+
+* OTA update
+
+**Wemos D1 mini pinout:**
+
 ![WeMos D1 mini](wemos_d1_mini.jpg)
