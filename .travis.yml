@@ -5,11 +5,14 @@ cache:
   directories:
     - "functions/node_modules"
 stages:
+  - check_security
   - build
   - name: deploy
     if: branch = master
 jobs:
   include:
+  - stage: check_security
+    script: npm audit
   - stage: build
     before_script:
       - cd functions && npm ci
