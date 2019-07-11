@@ -12,7 +12,7 @@ stages:
 jobs:
   include:
   - stage: check_security
-    script: npm audit
+    script: cd functions && npm audit
   - stage: build
     before_script:
       - cd functions && npm ci
