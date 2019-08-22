@@ -1,5 +1,4 @@
 import * as functions from "firebase-functions";
-import axios from "axios";
 
 // CAUTION!!! This gives this code full read/write rights from/to the Realtime Database.
 import * as admin from "firebase-admin";
@@ -30,10 +29,6 @@ app.get(
       return;
     }
 
-    const responseUrl = request.query.response_url;
-
-    response.sendStatus(200);
-
     const snapshot = await admin
       .database()
       .ref("/timestamped_measures")
@@ -41,31 +36,34 @@ app.get(
       .limitToLast(1)
       .once("value");
 
-    let text = "";
-
     snapshot.forEach(childSnapshot => {
       const { value, timestamp, distance } = childSnapshot.val();
 
       if (distance > 10) {
-        text = `Seems like the coffee pot is not in place :feelsbadman: Check again later `;
-      } else {
-        if (Date.now() - timestamp > 1000 * 60 * 5) {
-          text = `Oops! Seems like the temperature hasn't updated in a while. Please fix it :pray: The latest measurement is from ${new Date(
+        response.send(
+          `Seems like the coffee pot is not in place :feelsbadman: Check again later `
+        );
+        return;
+      }
+
+      if (Date.now() - timestamp > 1000 * 60 * 5) {
+        response.send(
+          `Oops! Seems like the temperature hasn't updated in a while. Please fix it :pray: The latest measurement is from ${new Date(
             timestamp
-          )}`;
-        } else {
-          if (value >= 50) {
-            text = `The temperature of the coffee is currently ${parseFloat(
+          )}`
+        );
+      } else {
+        if (value >= 50) {
+          response.send(
+            `The temperature of the coffee is currently ${parseFloat(
               value
-            ).toFixed(0)} °C :coffee_parrot: :feelsgoodman:`;
-          } else {
-            text = `No fresh coffee for you :feelsbadman:`;
-          }
+            ).toFixed(0)} °C :coffee_parrot: :feelsgoodman:`
+          );
+        } else {
+          response.send(`No fresh coffee for you :feelsbadman:`);
         }
       }
     });
-
-    await axios.post(responseUrl, { text });
   })
 );
 
