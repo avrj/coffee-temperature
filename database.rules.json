@@ -1,0 +1,11 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+      "timestamped_measures": {
+        ".indexOn": "timestamp",
+        ".read": true,
+    	".write": false,
+      }
+  }
+}
