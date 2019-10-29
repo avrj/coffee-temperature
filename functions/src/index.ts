@@ -16,7 +16,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const webApi = functions.https.onRequest(app);
+const webApi = functions.region("europe-west1").https.onRequest(app);
 
 app.get(
   "/coffee",
@@ -67,8 +67,9 @@ app.get(
   })
 );
 
-const formatData = functions.database
-  .ref("/coffee1/temp/{pushId}/")
+const formatData = functions
+  .region("europe-west1")
+  .database.ref("/coffee1/temp/{pushId}/")
   .onCreate((snapshot, context) => {
     const original = snapshot.val();
     const pushId = context.params.pushId;
