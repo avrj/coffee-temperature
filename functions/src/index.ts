@@ -6,6 +6,8 @@ import * as admin from "firebase-admin";
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 
+const region = "europe-west1";
+
 const asyncMiddleware = (fn: any) => (req: any, res: any, next: any) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
@@ -16,7 +18,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const webApi = functions.region("europe-west1").https.onRequest(app);
+const webApi = functions.region(region).https.onRequest(app);
 
 app.get(
   "/coffee",
@@ -68,7 +70,7 @@ app.get(
 );
 
 const formatData = functions
-  .region("europe-west1")
+  .region(region)
   .database.ref("/coffee1/temp/{pushId}/")
   .onCreate((snapshot, context) => {
     const original = snapshot.val();
