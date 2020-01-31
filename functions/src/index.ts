@@ -55,7 +55,11 @@ app.get(
           )}`
         );
       } else {
-        if (value >= 50) {
+        if (value >= 200) {
+          response.send(
+            `Temperature out of range. Check the temperature sensor and the wires. :fixparrot:`
+          );
+        } else if (value >= 50) {
           response.send(
             `The temperature of the coffee is currently ${parseFloat(
               value
