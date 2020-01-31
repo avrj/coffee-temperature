@@ -20,3 +20,11 @@ The API is used by a Slack slash command.
 **Wemos D1 mini pinout:**
 
 ![WeMos D1 mini](wemos_d1_mini.jpg)
+
+
+**Wiring:**
+
+D1 <-> MLX90614 SDL
+D2 <-> MLX90614 SDA
+D6 <- 3.3V ~ 5 V-> HC-SR04 ECHO
+D7 <- 3.3V ~ 5 V -> HC-SR04 TRIG
